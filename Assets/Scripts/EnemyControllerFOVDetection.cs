@@ -27,6 +27,7 @@ public class EnemyControllerFOVDetection : MonoBehaviour {
     }
 
     IEnumerator Patrol() {
+        GetComponent<NavMeshAgent>().SetDestination(destination);
         while (true) {
             if (Vector3.Distance(transform.position, destination) < 1.5f) {
                 GetComponent<Animator>().SetFloat("velocity", 0);
@@ -53,10 +54,10 @@ public class EnemyControllerFOVDetection : MonoBehaviour {
 
     IEnumerator Attack() {
         while (true) {
-            if (Vector3.Distance(transform.position, player.position) < playerDetectionDistance) {
+            if (Vector3.Distance(transform.position, player.position) > playerDetectionDistance) {
                 StartCoroutine(Patrol());
                 StartCoroutine(Alert());
-                StartCoroutine(Attack());
+                break;
             }
             if (Vector3.Distance(transform.position, player.position) < playerAttackDistance) {
                 GetComponent<NavMeshAgent>().SetDestination(transform.position);
@@ -69,6 +70,4 @@ public class EnemyControllerFOVDetection : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
     }
-
-
 }

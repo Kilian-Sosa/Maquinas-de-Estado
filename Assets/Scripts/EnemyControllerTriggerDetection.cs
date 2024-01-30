@@ -22,6 +22,7 @@ public class EnemyControllerTriggerDetection : MonoBehaviour {
     }
 
     IEnumerator Patrol() {
+        GetComponent<NavMeshAgent>().SetDestination(destination);
         while (true) {
             if (Vector3.Distance(transform.position, destination) < 1.5f) {
                 GetComponent<Animator>().SetFloat("velocity", 0);
