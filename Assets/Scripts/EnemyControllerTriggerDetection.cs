@@ -2,9 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyControllerTriggerDetection : MonoBehaviour {
     [SerializeField] Vector3 min, max;
     Vector3 destination;
+    bool playerDetected = false;
 
     void Start() {
         
@@ -30,5 +31,19 @@ public class EnemyController : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
     }
+
+    void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Player")) {
+            playerDetected = true;
+            StopCoroutine(Patrol());
+            transform.LookAt(other.transform);
+            GetComponent<NavMeshAgent>().SetDestination(other.transform.position);
+        }
+    }
+
+    void OnTriggerExit(Collider other) {
+        if (other.CompareTag("Player")) {
+            playerDetected = false;
+        }
+    }
 }
-A
