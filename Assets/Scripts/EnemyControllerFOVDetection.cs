@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class EnemyControllerFOVDetection : MonoBehaviour {
     [SerializeField] Vector3 min, max;
     Vector3 destination;
-    [SerializeField] float playerDistanceDetection;
+    [SerializeField] float playerDetectionDistance, playerAttackDistance;
     Transform player;
     float visionAngle;
 
@@ -39,14 +39,36 @@ public class EnemyControllerFOVDetection : MonoBehaviour {
 
     IEnumerator Alert() {
         while (true) {
-            if (Vector3.Distance(transform.position, player.position) < playerDistanceDetection) {
+            if (Vector3.Distance(transform.position, player.position) < playerDetectionDistance) {
                 Vector3 vectorPlayer = player.position - transform.position;
                 if (Vector3.Angle(vectorPlayer.normalized, transform.forward) < visionAngle) {
                     StopCoroutine(Patrol());
-                    GetComponent<NavMeshAgent>().SetDestination(player.position);
-                } else StartCoroutine(Alert());
-            } else StartCoroutine(Patrol());
+                    StartCoroutine(Attack());
+                    break;
+                }
+            }
             yield return new WaitForEndOfFrame();
         }
     }
+
+    IEnumerator Attack() {
+        while (true) {
+            if (Vector3.Distance(transform.position, player.position) < playerDetectionDistance) {
+                StartCoroutine(Patrol());
+                StartCoroutine(Alert());
+                StartCoroutine(Attack());
+            }
+            if (Vector3.Distance(transform.position, player.position) < playerAttackDistance) {
+                GetComponent<NavMeshAgent>().SetDestination(transform.position);
+                GetComponent<NavMeshAgent>().velocity = Vector3.zero;
+                GetComponent<Animator>().SetBool("attack", true);
+            } else {
+                GetComponent<NavMeshAgent>().SetDestination(player.position);
+                GetComponent<Animator>().SetBool("attack", false);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+
 }
