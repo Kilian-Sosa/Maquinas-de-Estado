@@ -63,6 +63,7 @@ public class EnemyControllerFOVDetection : MonoBehaviour {
                 GetComponent<NavMeshAgent>().SetDestination(transform.position);
                 GetComponent<NavMeshAgent>().velocity = Vector3.zero;
                 GetComponent<Animator>().SetBool("attack", true);
+                yield return new WaitForSeconds(3);
             } else {
                 GetComponent<NavMeshAgent>().SetDestination(player.position);
                 GetComponent<Animator>().SetBool("attack", false);
